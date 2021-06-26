@@ -1,0 +1,76 @@
+= telegram-kafka project
+A Camel Quarkus example with Telegram / Kafka / postgresql
+
+An example that shows how to create a Telegram bot using camel-quarkus, and how to produce and consume messages in a Kafka topic, and in postgesql database. It also shows how to set quickly a REST endpoint using platform-http. It also shows some implementations of Content Based Router EIP and Message Translator EIP.
+
+==== Prerequisites
+
+The example application requires an existing Telegram bot, a running Kafka instance, and a running Postgresql instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and a postgresql instance in dev mode.
+
+You need to set the Telegram Token, and prod Kafka and postgresql instance credentials in the corresponding section in `src/main/resources/application.properties`.
+
+==== Start in Development mode
+
+Set your telegram Token:
+----
+$ export TELEGRAM_AUTHORIZATION_TOKEN = <YOUR_TELEGRAM_AUTHORIZATION_TOKEN>
+----
+
+Run the application in development mode.
+
+----
+$ mvn clean compile quarkus:dev
+----
+
+=== Package and run the application
+
+Once you are done with developing you may want to package and run the application.
+
+==== JVM mode
+
+----
+$ mvn clean package -DskipTests
+$ java -jar target/quarkus-app/quarkus-run.jar
+----
+
+==== Native mode
+
+IMPORTANT: Native mode requires having GraalVM and other tools installed. Please check the Prerequisites section
+of https://camel.apache.org/camel-quarkus/latest/first-steps.html#_prerequisites[Camel Quarkus User guide].
+
+To prepare a native executable using GraalVM, run the following command:
+
+----
+$ mvn clean package -DskipTests -Pnative
+$ ./target/*-runner
+----
+
+==== Deploying to Kubernetes
+
+You can build a container image for the application like this. Refer to the https://quarkus.io/guides/deploying-to-kubernetes[Quarkus Kubernetes guide] for options around customizing image names, registries etc.
+
+Uncomment the container build section. Set the proper image group.
+
+----
+$ mvn clean package -DskipTests
+----
+
+If you are using a local development cluster like Kind or k3s, you can use host the container image on your local host. Or, with minikube, use the Docker daemon from the cluster virtual machine `eval $(minikube docker-env)`. Otherwise, you'll need to push the image to a registry of your choosing.
+
+TIP: You can build &amp; deploy in one single step by doing `mvn clean package -DskipTests -Dquarkus.kubernetes.deploy=true`
+
+Check pods are running.
+
+Tail the application logs.
+----
+$ kubectl logs -f  telegram-kafka-67ddc468d-z9kzt
+----
+To clean up do.
+----
+$ kubectl delete all -l app.kubernetes.io/name=telegram-kafkan
+----
+==== Deploying to OpenShift
+You may need to set the credentials in `src/main/resources/applications.properties` or attach a kubernetes secrect.
+----
+$ mvn clean package -DskipTests -Dquarkus.kubernetes.deploy=true -Dopenshift
+----
