@@ -1,6 +1,7 @@
 package org.acme.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
@@ -8,9 +9,9 @@ import javax.persistence.NamedQuery;
 @NamedQuery(name = "findAll", query = "SELECT m FROM TelegramMessage m")
 public class TelegramMessage {
     @Id
+    @GeneratedValue
     Long id;
-    String text;
-    String userName;
+    String message;
 
     public TelegramMessage() {
     }
@@ -23,19 +24,11 @@ public class TelegramMessage {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getMessage() {
+        return message;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

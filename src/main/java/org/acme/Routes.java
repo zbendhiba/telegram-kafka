@@ -10,20 +10,9 @@ public class Routes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("telegram:bots?authorizationToken={{telegram-token-api}}")
-                .bean(TelegramBean.class)
-                .to("direct:process-message");
-
-        from("direct:process-message")
-                .choice()
-                    .when(simple("${body} contains '/start'"))
-                        .transform(simple("{{msg.bot.start}}"))
-                    .when(simple("${body} contains '#msg'"))
-                        .to("kafka:telegram-message")
-                        .transform(simple("{{msg.bot.msg}}"))
-                    .otherwise()
-                        .transform(simple("{{msg.bot.otherwise}}"))
-                .end()
-                .setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, simple(TelegramParseMode.MARKDOWN.name()))
+                .transform(simple("{\"message\":\"${body}\"}"))
+                .to("kafka:telegram-message")
+                .transform(constant("{{msg.bot.response}}"))
                 .to("telegram:bots?authorizationToken={{telegram-token-api}}");
 
         from("kafka:telegram-message")
