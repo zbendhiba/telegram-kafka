@@ -1,9 +1,15 @@
 package org.acme;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.acme.model.TelegramMessage;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 
+@ApplicationScoped
 @RegisterForReflection
+@Named("telegramBean")
 public class TelegramBean {
 
     public String translate(IncomingMessage incomingMessage) {
@@ -12,6 +18,11 @@ public class TelegramBean {
                 incomingMessage.getMessageId(),
                 incomingMessage.getText(),
                 incomingMessage.getFrom().getFirstName() + " " + incomingMessage.getFrom().getLastName());
+    }
 
+   public String createNotification(TelegramMessage telegramMessage){
+        return String.format("You have a new incoming message %s from %s",
+                telegramMessage.getId(),
+                telegramMessage.getUserName());
     }
 }
