@@ -1,7 +1,6 @@
 package org.acme;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.acme.model.TelegramMessage;
@@ -9,7 +8,6 @@ import org.apache.camel.component.telegram.model.IncomingMessage;
 
 @ApplicationScoped
 @RegisterForReflection
-@Named("telegramBean")
 public class TelegramBean {
 
     public String translate(IncomingMessage incomingMessage) {

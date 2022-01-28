@@ -1,6 +1,7 @@
 package org.acme;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.acme.model.TelegramMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -9,11 +10,13 @@ import org.apache.camel.component.telegram.TelegramParseMode;
 
 @ApplicationScoped
 public class Routes extends RouteBuilder {
+    @Inject
+    TelegramBean myBean;
 
     @Override
     public void configure() throws Exception {
         from("telegram:bots?authorizationToken={{telegram-token-api}}")
-                .bean("telegramBean", "translate")
+                .bean(myBean, "translate")
                 .to("direct:process-message");
 
         from("direct:process-message")
@@ -33,7 +36,7 @@ public class Routes extends RouteBuilder {
                 .log("Incoming message from Kafka topic telegram-message ${body} ")
                 .unmarshal().json(TelegramMessage.class)
                 .to("jpa:"+ TelegramMessage.class)
-                .bean("telegramBean", "createNotification")
+                .bean(myBean, "createNotification")
                 .toD("slack://general?webhookUrl={{webhook-url}}");
 
         from("platform-http:/messages?httpMethodRestrict=GET")
