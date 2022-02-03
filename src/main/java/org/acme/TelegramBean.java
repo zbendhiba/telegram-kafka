@@ -3,7 +3,6 @@ package org.acme;
 import javax.enterprise.context.ApplicationScoped;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.acme.model.TelegramMessage;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 
 @ApplicationScoped
@@ -18,9 +17,4 @@ public class TelegramBean {
                 incomingMessage.getFrom().getFirstName() + " " + incomingMessage.getFrom().getLastName());
     }
 
-   public String createNotification(TelegramMessage telegramMessage){
-        return String.format("You have a new incoming message %s from %s",
-                telegramMessage.getId(),
-                telegramMessage.getUserName());
-    }
 }
