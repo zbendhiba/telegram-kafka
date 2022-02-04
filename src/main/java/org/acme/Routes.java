@@ -32,17 +32,6 @@ public class Routes extends RouteBuilder {
                 .setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, simple(TelegramParseMode.MARKDOWN.name()))
                 .to("telegram:bots?authorizationToken={{telegram-token-api}}");
 
-        from("kafka:telegram-message")
-                .log("Incoming message from Kafka topic telegram-message ${body} ")
-                .unmarshal().json(TelegramMessage.class)
-                .to("jpa:"+ TelegramMessage.class)
-                .bean(myBean, "createNotification")
-                .toD("slack://general?webhookUrl={{webhook-url}}");
-
-        from("platform-http:/messages?httpMethodRestrict=GET")
-                .to("jpa:"+ TelegramMessage.class+"?namedQuery=findAll")
-                .marshal().json();
-
 
     }
 }
