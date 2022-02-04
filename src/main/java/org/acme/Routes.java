@@ -24,7 +24,6 @@ public class Routes extends RouteBuilder {
                     .when(simple("${body} contains '/start'"))
                         .transform(simple("{{msg.bot.start}}"))
                     .when(simple("${body} contains '#msg'"))
-                        .to("kafka:telegram-message")
                         .transform(simple("{{msg.bot.msg}}"))
                     .otherwise()
                         .transform(simple("{{msg.bot.otherwise}}"))
