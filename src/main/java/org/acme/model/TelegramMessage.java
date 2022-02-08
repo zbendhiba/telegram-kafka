@@ -10,7 +10,8 @@ public class TelegramMessage {
     @Id
     Long id;
     String text;
-    String userName;
+    String firstName;
+    String lastName;
 
     public TelegramMessage() {
     }
@@ -31,11 +32,19 @@ public class TelegramMessage {
         this.text = text;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

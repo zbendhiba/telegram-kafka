@@ -9,18 +9,10 @@ import org.apache.camel.component.telegram.model.IncomingMessage;
 @ApplicationScoped
 @RegisterForReflection
 public class TelegramBean {
-
-    public String translate(IncomingMessage incomingMessage) {
-        return String.format(
-                "{\"id\":%s, \"text\":\"%s\",\"userName\":\"%s\"}",
-                incomingMessage.getMessageId(),
-                incomingMessage.getText(),
-                incomingMessage.getFrom().getFirstName() + " " + incomingMessage.getFrom().getLastName());
-    }
-
    public String createNotification(TelegramMessage telegramMessage){
-        return String.format("You have a new incoming message %s from %s",
+        return String.format("You have a new incoming message %s from %s %s",
                 telegramMessage.getId(),
-                telegramMessage.getUserName());
+                telegramMessage.getFirstName(),
+                telegramMessage.getLastName());
     }
 }
