@@ -28,9 +28,7 @@ public class Routes extends RouteBuilder {
         from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body} ")
                 .unmarshal().json(TelegramMessage.class)
-                .to("jpa:"+ TelegramMessage.class)
-                .bean(TelegramBean.class)
-                .toD("slack://general?webhookUrl={{webhook-url}}");
+                .to("jpa:"+ TelegramMessage.class);
 
         from("platform-http:/messages?httpMethodRestrict=GET")
                 .to("jpa:"+ TelegramMessage.class+"?namedQuery=findAll")
