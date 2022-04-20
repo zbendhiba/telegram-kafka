@@ -1,11 +1,5 @@
 package org.acme;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
-
-import io.quarkus.runtime.annotations.RegisterForReflection;
-
-
 public class TelegramMessage {
     Long id;
     String text;
