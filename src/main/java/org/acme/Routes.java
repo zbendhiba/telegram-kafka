@@ -8,10 +8,6 @@ import org.apache.camel.builder.RouteBuilder;
 public class Routes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        from("telegram:bots")
-                .log("${body}")
-                .transform(constant("Merci pour votre message!"))
-                .to("telegram:bots");
 
     }
 }
