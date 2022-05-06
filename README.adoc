@@ -5,9 +5,11 @@ An example that shows how to create a Telegram bot using camel-quarkus, and how 
 
 ==== Prerequisites
 
-The example application requires an existing Telegram bot, a running Kafka instance, and a running Postgresql instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and a postgresql instance in dev mode.
+The example application requires an existing Telegram bot, a running Kafka instance, and a running DynamoDb instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and localstack to emulate DynamoDB.
 
-You need to set the Telegram Token, and prod Kafka and postgresql instance credentials in the corresponding section in `src/main/resources/application.properties`.
+==== Start DynamoDB
+$ docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack:0.14.2
+----
 
 ==== Start in Development mode
 
