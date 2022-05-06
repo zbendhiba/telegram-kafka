@@ -1,25 +1,18 @@
 package org.acme.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-
-@Entity
-@NamedQuery(name = "findAll", query = "SELECT m FROM TelegramMessage m")
 public class TelegramMessage {
-    @Id
-    Long id;
+    String id;
     String text;
     String userName;
 
     public TelegramMessage() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

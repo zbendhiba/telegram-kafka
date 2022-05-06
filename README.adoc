@@ -1,13 +1,35 @@
 = telegram-kafka project
-A Camel Quarkus example with Telegram / Kafka / postgresql
+A Camel Quarkus example with Telegram / Kafka / AWS DynamoDB
 
 An example that shows how to create a Telegram bot using camel-quarkus, and how to produce and consume messages in a Kafka topic, and in postgesql database. It also shows how to set quickly a REST endpoint using platform-http. It also shows some implementations of Content Based Router EIP and Message Translator EIP.
 
 ==== Prerequisites
 
-The example application requires an existing Telegram bot, a running Kafka instance, and a running Postgresql instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and a postgresql instance in dev mode.
+The example application requires an existing Telegram bot, a running Kafka instance, and a running DynamoDb instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and localstack to emulate DynamoDB.
 
-You need to set the Telegram Token, and prod Kafka and postgresql instance credentials in the corresponding section in `src/main/resources/application.properties`.
+==== Start DynamoDB locally
+
+Start dynamo
+----
+$ docker run --publish 8000:8000 amazon/dynamodb-local:16.0 -jar DynamoDBLocal.jar -inMemory -sharedDb
+
+Open `http://localhost:8000/shell` in your browser.
+
+Copy and paste the following code to the shell and run it:
+
+----
+ var params = {
+    TableName: 'telegram',
+    KeySchema: [{ AttributeName: 'id', KeyType: 'HASH' }],
+    AttributeDefinitions: [{  AttributeName: 'id', AttributeType: 'S', }],
+    ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1, }
+};
+
+dynamodb.createTable(params, function(err, data) {
+    if (err) ppJson(err);
+    else ppJson(data);
+});
+----
 
 ==== Start in Development mode
 
@@ -17,6 +39,18 @@ $ export TELEGRAM_AUTHORIZATION_TOKEN = <YOUR_TELEGRAM_AUTHORIZATION_TOKEN>
 ----
 
 Run the application in development mode.
+
+Start sending messages. Scan your result by executing this in the shell
+----
+var params = {
+TableName: 'telegram'
+};
+
+dynamodb.scan(params, function(err, data) {
+    if (err) ppJson(err); // an error occurred
+    else ppJson(data); // successful response
+});
+----
 
 ----
 $ mvn clean compile quarkus:dev
