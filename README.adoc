@@ -1,5 +1,5 @@
 = telegram-kafka project
-A Camel Quarkus example with Telegram / Kafka / postgresql
+A Camel Quarkus example with Telegram / Kafka / AWS DynamoDB
 
 An example that shows how to create a Telegram bot using camel-quarkus, and how to produce and consume messages in a Kafka topic, and in postgesql database. It also shows how to set quickly a REST endpoint using platform-http. It also shows some implementations of Content Based Router EIP and Message Translator EIP.
 
@@ -7,9 +7,41 @@ An example that shows how to create a Telegram bot using camel-quarkus, and how 
 
 The example application requires an existing Telegram bot, a running Kafka instance, and a running DynamoDb instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and localstack to emulate DynamoDB.
 
-==== Start DynamoDB
-$ docker run --rm -it -p 4566:4566 -p 4510-4559:4510-4559 localstack/localstack:0.14.2
+==== Start DynamoDB and create Database with Localstack
+
+Start Localstack
 ----
+$ cd setup
+$ docker-compose up
+----
+If started, we should have this kind of listing:
+----
+localstack_1  | Starting edge router (https port 4566)...
+localstack_1  | [2022-05-06 14:52:43 +0000] [20] [INFO] Running on https://0.0.0.0:4566 (CTRL + C to quit)
+localstack_1  | 2022-05-06T14:52:43.575:INFO:hypercorn.error: Running on https://0.0.0.0:4566 (CTRL + C to quit)
+localstack_1  | 2022-05-06 14:52:43,893 INFO success: infra entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+localstack_1  | Ready.
+----
+
+Create database using the aws cli, using another terminal window
+
+----
+$ aws dynamodb --endpoint-url=http://localhost:4566 create-table \
+    --table-name telegram \
+    --attribute-definitions \
+        AttributeName=id,AttributeType=S \
+    --key-schema \
+        AttributeName=id,KeyType=HASH \
+    --provisioned-throughput \
+        ReadCapacityUnits=10,WriteCapacityUnits=5
+----
+
+Export AWS credentials
+----
+$ export AWS_ACCESS_KEY_ID='123'
+$ export AWS_SECRET_KEY='xyz'
+----
+
 
 ==== Start in Development mode
 
