@@ -2,6 +2,7 @@ package org.acme;
 
 import org.acme.model.TelegramMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.ddb.Ddb2Operations;
 import org.apache.camel.component.telegram.TelegramConstants;
 import org.apache.camel.component.telegram.TelegramParseMode;
 
@@ -9,8 +10,9 @@ public class Routes extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+
         from("telegram:bots?authorizationToken={{telegram-token-api}}")
-                .bean(TelegramBean.class)
+                .bean("telegramBean", "toKafka")
                 .to("direct:process-message");
 
         from("direct:process-message")
@@ -28,12 +30,15 @@ public class Routes extends RouteBuilder {
 
         from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body} ")
-                .unmarshal().json(TelegramMessage.class)
-                .to("jpa:"+ TelegramMessage.class);
+               .unmarshal().json(TelegramMessage.class)
+                .bean("telegramBean", "toDynamo")
+                .log("transformed for Dynamo ${body}")
+                .to("aws2-ddb://telegram?operation="+ Ddb2Operations.PutItem)
+            ;
 
-        from("platform-http:/messages?httpMethodRestrict=GET")
+      /*  from("platform-http:/messages?httpMethodRestrict=GET")
                 .to("jpa:"+ TelegramMessage.class+"?namedQuery=findAll")
-                .marshal().json();
+                .marshal().json();*/
 
 
     }
