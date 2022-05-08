@@ -11,7 +11,7 @@ The example application requires an existing Telegram bot, a running Kafka insta
 
 Start dynamo
 ----
-$ docker run --publish 8000:8000 amazon/dynamodb-local:1.11.477 -jar DynamoDBLocal.jar -inMemory -sharedDb
+$ docker run --publish 8000:8000 amazon/dynamodb-local:16.0 -jar DynamoDBLocal.jar -inMemory -sharedDb
 
 Open `http://localhost:8000/shell` in your browser.
 
@@ -26,18 +26,10 @@ Copy and paste the following code to the shell and run it:
 };
 
 dynamodb.createTable(params, function(err, data) {
-if (err) ppJson(err);
-else ppJson(data);
-
+    if (err) ppJson(err);
+    else ppJson(data);
 });
 ----
-
-Export AWS credentials
-----
-$ export AWS_ACCESS_KEY_ID='123'
-$ export AWS_SECRET_KEY='xyz'
-----
-
 
 ==== Start in Development mode
 
@@ -47,6 +39,18 @@ $ export TELEGRAM_AUTHORIZATION_TOKEN = <YOUR_TELEGRAM_AUTHORIZATION_TOKEN>
 ----
 
 Run the application in development mode.
+
+Start sending messages. Scan your result by executing this in the shell
+----
+var params = {
+TableName: 'telegram'
+};
+
+dynamodb.scan(params, function(err, data) {
+    if (err) ppJson(err); // an error occurred
+    else ppJson(data); // successful response
+});
+----
 
 ----
 $ mvn clean compile quarkus:dev
