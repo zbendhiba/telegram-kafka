@@ -11,10 +11,9 @@ import org.apache.camel.component.telegram.TelegramParseMode;
 public class Routes extends RouteBuilder {
 
     public void configure() throws Exception {
-        Predicate isStart = header("TheMessage").isEqualTo("/start");
+        Predicate isStart = jsonpath("$.text").isEqualTo("/start");
 
         from("telegram:bots?authorizationToken={{telegram-token-api}}")
-                .setHeader("TheMessage", simple("${body}"))
                 .bean(TelegramService.class)
                 .to("direct:process-message");
 
@@ -30,7 +29,7 @@ public class Routes extends RouteBuilder {
                 .setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, simple(TelegramParseMode.MARKDOWN.name()))
                 .to("telegram:bots?authorizationToken={{telegram-token-api}}");
 
-        from("kafka:telegram-message")
+       from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body}")
                 .setHeader(AWS2S3Constants.KEY, simple(UUID.randomUUID().toString()))
                 .to("aws2-s3:{{aws-s3.bucket-name}}");
