@@ -7,8 +7,11 @@ services:
     environment:
       - AWS_DEFAULT_REGION=us-east-1
       - EDGE_PORT=4566
-      - SERVICES=dynamodb
-      - KINESIS_PROVIDER=kinesalite
+      - SERVICES=s3
+      - HOSTNAME_EXTERNAL=localhost
+      - USE_SSL=false
+      - DATA_DIR=/tmp/localstack/data
+      - DEBUG=1
     ports:
       - '4566:4566'
     volumes:

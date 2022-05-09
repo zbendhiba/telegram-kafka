@@ -10,7 +10,6 @@ public class TelegramMessage {
 
     private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    String id = UUID.randomUUID().toString();
     Long chatId;
     String text;
     String userName;
@@ -38,14 +37,6 @@ public class TelegramMessage {
     public TelegramMessage withUsername(String firstName, String lastName) {
         this.userName = firstName + " " + lastName;
         return this;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Long getChatId() {

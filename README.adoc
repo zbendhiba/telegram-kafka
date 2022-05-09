@@ -5,30 +5,21 @@ An example that shows how to create a Telegram bot using camel-quarkus, and how 
 
 ==== Prerequisites
 
-The example application requires an existing Telegram bot, a running Kafka instance, and a running DynamoDb instance. For simplicity, this example uses quarkus DevServices to launch a kafka instance, and localstack to emulate DynamoDB.
+The example application requires an existing Telegram bot, a running Kafka instance, and a S3 bucket instance.
+For simplicity, on dev mode : this example uses quarkus DevServices to launch a kafka instance, and localstack to emulate S3.
 
-==== Start DynamoDB locally
+==== Start S3 locally
 
-Start dynamo
+Start an  instance of localstack
 ----
-$ docker run --publish 8000:8000 amazon/dynamodb-local:16.0 -jar DynamoDBLocal.jar -inMemory -sharedDb
-
-Open `http://localhost:8000/shell` in your browser.
-
-Copy and paste the following code to the shell and run it:
-
+$ cd setup
+$ docker-compose up
 ----
- var params = {
-    TableName: 'telegram',
-    KeySchema: [{ AttributeName: 'id', KeyType: 'HASH' }],
-    AttributeDefinitions: [{  AttributeName: 'id', AttributeType: 'S', }],
-    ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1, }
-};
 
-dynamodb.createTable(params, function(err, data) {
-    if (err) ppJson(err);
-    else ppJson(data);
-});
+Then open another terminal to create a bucket
+IMPORTANT: you will need the AWS cli installed, to execute this command
+----
+$ aws --endpoint-url=http://localhost:4566 s3 mb s3://test1
 ----
 
 ==== Start in Development mode
@@ -39,18 +30,6 @@ $ export TELEGRAM_AUTHORIZATION_TOKEN = <YOUR_TELEGRAM_AUTHORIZATION_TOKEN>
 ----
 
 Run the application in development mode.
-
-Start sending messages. Scan your result by executing this in the shell
-----
-var params = {
-TableName: 'telegram'
-};
-
-dynamodb.scan(params, function(err, data) {
-    if (err) ppJson(err); // an error occurred
-    else ppJson(data); // successful response
-});
-----
 
 ----
 $ mvn clean compile quarkus:dev
