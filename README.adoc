@@ -40,14 +40,14 @@ $ mvn clean compile quarkus:dev
 Once you are done with developing you may want to package and run the application. You need to export KAFKA and AWS S3 credentials:
 
 ----
-$ export KAFKA_BOOSTRAP_URL = INSERT_HERE_YOUR_BOOSTRAP_URL
-$ export AWS_S3_BUCKET_NAME = INSERT_HERE_YOUR_AWS_S3_BUCKET_NAME
-$ export AWS_ACCESS_KEY_ID = INSERT_HERE_YOUR_AWS_ACCESS_KEY_ID
-$ export AWS_SECRET_KEY = INSERT_HERE_YOUR_AWS_SECRET_KEY
-$ export AWS_REGION = INSERT_HERE_YOUR_AWS_REGION
+$ export KAFKA_BOOSTRAP_URL=INSERT_HERE_YOUR_BOOSTRAP_URL
+$ export AWS_S3_BUCKET_NAME=INSERT_HERE_YOUR_AWS_S3_BUCKET_NAME
+$ export AWS_ACCESS_KEY=INSERT_HERE_YOUR_AWS_ACCESS_KEY_ID
+$ export AWS_SECRET_KEY=INSERT_HERE_YOUR_AWS_SECRET_KEY
+$ export AWS_REGION=INSERT_HERE_YOUR_AWS_REGION
 ----
 
-IMPORTANT: If you don't have any instances of Kafka and S3, show sections Install Kafka and S3 locally
+IMPORTANT: If you don't have any instances of Kafka and S3, go to section Install Kafka and S3 locally
 
 ==== JVM mode
 
@@ -118,12 +118,12 @@ $ docker run -d --pull=always --name=redpanda-1 --rm \
 Create a topic
 ----
     docker exec -it redpanda-1 \
-        rpk topic create test1 --brokers=localhost:9092
+        rpk topic create telegram-message --brokers=localhost:9092
 ----
 
 Export Kafka URL broker
 ----
-$ export KAFKA_BOOSTRAP_URL = 127.0.0.1:9092
+$ export KAFKA_BOOSTRAP_URL=127.0.0.1:9092
 ----
 
 Start an  instance of localstack
