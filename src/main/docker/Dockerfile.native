@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/telegram-kafka .
+# docker build -f src/main/docker/Dockerfile.native -t quarkus/telegram-kafka-s3 .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/telegram-kafka
+# docker run -i --rm -p 8080:8080 quarkus/telegram-kafka-s3
 #
 ###
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
