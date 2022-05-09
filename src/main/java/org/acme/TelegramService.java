@@ -16,7 +16,7 @@ public class TelegramService {
         return new TelegramMessage()
                 .withChatId(incomingMessage.getMessageId())
                 .withText(incomingMessage.getText())
-                .withUsername(incomingMessage.getFrom().getFirstName(), incomingMessage.getFrom().getLastName())
+                .withUsername(incomingMessage.getFrom().getFirstName())
                 .withDate(new Date());
     }
 }

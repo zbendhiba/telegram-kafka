@@ -8,17 +8,18 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public class TelegramMessage {
 
-    Long chatId;
+    Long telegramId;
     String text;
     String userName;
     String dateTime;
+
     private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     public TelegramMessage() {
     }
 
-    public TelegramMessage withChatId(Long chatId) {
-        this.chatId = chatId;
+    public TelegramMessage withChatId(Long telegramId) {
+        this.telegramId = telegramId;
         return this;
     }
 
@@ -33,17 +34,17 @@ public class TelegramMessage {
     }
 
 
-    public TelegramMessage withUsername(String firstName, String lastName) {
-        this.userName = firstName + " " + lastName;
+    public TelegramMessage withUsername(String name) {
+        this.userName = name;
         return this;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public Long getTelegramId() {
+        return telegramId;
     }
 
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
+    public void setTelegramId(Long telegramId) {
+        this.telegramId = telegramId;
     }
 
     public String getText() {
