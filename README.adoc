@@ -26,7 +26,7 @@ $ aws --endpoint-url=http://localhost:4566 s3 mb s3://test1
 
 Set your telegram Token:
 ----
-$ export TELEGRAM_AUTHORIZATION_TOKEN = <YOUR_TELEGRAM_AUTHORIZATION_TOKEN>
+$ export TELEGRAM_AUTHORIZATION_TOKEN=INSERT_YOUR_TELEGRAM_AUTHORIZATION_TOKEN
 ----
 
 Run the application in development mode.
