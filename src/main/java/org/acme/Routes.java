@@ -1,6 +1,5 @@
 package org.acme;
 
-import org.acme.model.TelegramMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.TelegramConstants;
 import org.apache.camel.component.telegram.TelegramParseMode;
@@ -16,7 +15,7 @@ public class Routes extends RouteBuilder {
         from("direct:process-message")
                 .choice()
                     .when(simple("${body} contains '/start'"))
-                    .   transform(simple("{{msg.bot.start}}"))
+                        .transform(simple("{{msg.bot.start}}"))
                     .otherwise()
                         .marshal().json()
                         .to("kafka:telegram-message")
@@ -26,8 +25,7 @@ public class Routes extends RouteBuilder {
                 .to("telegram:bots?authorizationToken={{telegram-token-api}}");
 
         from("kafka:telegram-message")
-                .log("Incoming message from Kafka topic telegram-message ${body} ")
-                .log("transformed for S3 ${body}")
+                .log("Incoming message from Kafka topic telegram-message ${body}")
         ;
 
     }
