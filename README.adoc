@@ -102,7 +102,7 @@ $ mvn clean package -DskipTests -Dquarkus.kubernetes.deploy=true -Dopenshift
 
 Install Kafka using this command line
 ----
-$ docker run -d --pull=always --name=redpanda-1 --rm \
+$ docker run -d --name=redpanda-1 --rm \
         -p 9092:9092 \
         -p 9644:9644 \
         docker.vectorized.io/vectorized/redpanda:v22.1.2 \
@@ -143,4 +143,9 @@ update application.properties with those values
 ----
 camel.component.aws2-s3.override-endpoint=true
 camel.component.aws2-s3.uri-endpoint-override=http://localhost:4566
+----
+
+At the end of tests, stop instances
+----
+$ docker stop redpanda-1
 ----

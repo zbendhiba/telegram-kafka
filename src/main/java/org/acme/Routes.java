@@ -2,6 +2,7 @@ package org.acme;
 
 import java.util.UUID;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.telegram.TelegramConstants;
@@ -10,14 +11,16 @@ import org.apache.camel.component.telegram.TelegramParseMode;
 public class Routes extends RouteBuilder {
 
     public void configure() throws Exception {
+        Predicate isStart = header("TheMessage").isEqualTo("/start");
 
         from("telegram:bots?authorizationToken={{telegram-token-api}}")
+                .setHeader("TheMessage", simple("${body}"))
                 .bean(TelegramService.class)
                 .to("direct:process-message");
 
         from("direct:process-message")
                 .choice()
-                    .when(simple("${body} contains '/start'"))
+                    .when(isStart)
                         .transform(simple("{{msg.bot.start}}"))
                     .otherwise()
                         .marshal().json()
@@ -30,7 +33,6 @@ public class Routes extends RouteBuilder {
         from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body}")
                 .setHeader(AWS2S3Constants.KEY, simple(UUID.randomUUID().toString()))
-                .log("Key of message is ${header.CamelAwsS3Key}")
                 .to("aws2-s3:{{aws-s3.bucket-name}}");
 
         from("aws2-s3:{{aws-s3.bucket-name}}")
