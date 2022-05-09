@@ -35,9 +35,19 @@ Run the application in development mode.
 $ mvn clean compile quarkus:dev
 ----
 
-=== Package and run the application
+=== Package and run the application locally
 
-Once you are done with developing you may want to package and run the application.
+Once you are done with developing you may want to package and run the application. You need to export KAFKA and AWS S3 credentials:
+
+----
+$ export KAFKA_BOOSTRAP_URL = INSERT_HERE_YOUR_BOOSTRAP_URL
+$ export AWS_S3_BUCKET_NAME = INSERT_HERE_YOUR_AWS_S3_BUCKET_NAME
+$ export AWS_ACCESS_KEY_ID = INSERT_HERE_YOUR_AWS_ACCESS_KEY_ID
+$ export AWS_SECRET_KEY = INSERT_HERE_YOUR_AWS_SECRET_KEY
+$ export AWS_REGION = INSERT_HERE_YOUR_AWS_REGION
+----
+
+IMPORTANT: If you don't have any instances of Kafka and S3, show sections Install Kafka and S3 locally
 
 ==== JVM mode
 
@@ -86,4 +96,51 @@ $ kubectl delete all -l app.kubernetes.io/name=telegram-kafkan
 You may need to set the credentials in `src/main/resources/applications.properties` or attach a kubernetes secrect.
 ----
 $ mvn clean package -DskipTests -Dquarkus.kubernetes.deploy=true -Dopenshift
+----
+
+==== Install Kafka and S3 locally
+
+Install Kafka using this command line
+----
+$ docker run -d --pull=always --name=redpanda-1 --rm \
+        -p 9092:9092 \
+        -p 9644:9644 \
+        docker.vectorized.io/vectorized/redpanda:v22.1.2 \
+        redpanda start \
+        --overprovisioned \
+            --smp 1  \
+            --memory 1G \
+            --reserve-memory 0M \
+            --node-id 0 \
+            --check=false
+----
+
+Create a topic
+----
+    docker exec -it redpanda-1 \
+        rpk topic create test1 --brokers=localhost:9092
+----
+
+Export Kafka URL broker
+----
+$ export KAFKA_BOOSTRAP_URL = 127.0.0.1:9092
+----
+
+Start an  instance of localstack
+----
+$ cd setup
+$ docker-compose up
+----
+
+Then open another terminal to create a bucket
+IMPORTANT: you will need the AWS cli installed, to execute this command
+----
+$ aws --endpoint-url=http://localhost:4566 s3 mb s3://test1
+----
+
+update application.properties with those values
+
+----
+camel.component.aws2-s3.override-endpoint=true
+camel.component.aws2-s3.uri-endpoint-override=http://localhost:4566
 ----

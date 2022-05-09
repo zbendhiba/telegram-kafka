@@ -1,19 +1,18 @@
 package org.acme.model;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class TelegramMessage {
-
-    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     Long chatId;
     String text;
     String userName;
     String dateTime;
+    private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     public TelegramMessage() {
     }
@@ -28,7 +27,7 @@ public class TelegramMessage {
         return this;
     }
 
-    public TelegramMessage withDate(Date date){
+    public TelegramMessage withDate(Date date) {
         this.dateTime = DATE_FORMAT.format(date);
         return this;
     }
