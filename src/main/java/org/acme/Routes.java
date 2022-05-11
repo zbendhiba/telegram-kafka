@@ -5,33 +5,31 @@ import java.util.UUID;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.apache.camel.component.telegram.TelegramConstants;
-import org.apache.camel.component.telegram.TelegramParseMode;
 
 public class Routes extends RouteBuilder {
 
     public void configure() throws Exception {
         Predicate isStart = jsonpath("$.text").isEqualTo("/start");
 
-        from("telegram:bots?authorizationToken={{telegram-token-api}}")
-                .bean(TelegramService.class)
-                .to("direct:process-message");
-
-        from("direct:process-message")
+        from("telegram:bots")
                 .choice()
                     .when(isStart)
                         .transform(simple("{{msg.bot.start}}"))
                     .otherwise()
-                        .marshal().json()
-                        .to("kafka:telegram-message")
-                        .transform(simple("{{msg.bot.msg}}"))
+                        .to("direct:process-message")
                 .end()
-                .setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, simple(TelegramParseMode.MARKDOWN.name()))
-                .to("telegram:bots?authorizationToken={{telegram-token-api}}");
+                .to("telegram:bots");
 
-       from("kafka:telegram-message")
+        from("direct:process-message")
+                .bean(TelegramService.class)
+                .marshal().json()
+                .to("kafka:telegram-message")
+                .transform(simple("{{msg.bot.msg}}"));
+
+        from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body}")
                 .setHeader(AWS2S3Constants.KEY, simple(UUID.randomUUID().toString()))
+                .log(String.format("Sending message with header :: ${header.%s}", AWS2S3Constants.KEY))
                 .to("aws2-s3:{{aws-s3.bucket-name}}");
 
     }
