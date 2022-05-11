@@ -17,6 +17,6 @@
  */
 import org.apache.camel.builder.RouteBuilder;
 
-from("aws2-s3:{{aws-s3.bucket-name}}?delay=1500")
-        .log("${body}")
-        .to("knative:channel/feedback");
+from('aws2-s3:{{aws-s3.bucket-name}}?delay=1500')
+        .log('${body}')
+        .to('knative:channel/feedback');
