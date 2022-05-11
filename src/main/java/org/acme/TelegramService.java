@@ -8,7 +8,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.acme.model.TelegramMessage;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 
-@ApplicationScoped
 @RegisterForReflection
 public class TelegramService {
 
