@@ -149,3 +149,7 @@ At the end of tests, stop instances
 ----
 $ docker stop redpanda-1
 ----
+
+== Camel K demo
+
+See its separate link:camel-k/README.adoc[README].

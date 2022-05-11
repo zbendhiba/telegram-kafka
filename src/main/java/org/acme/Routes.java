@@ -31,6 +31,6 @@ public class Routes extends RouteBuilder {
                 .setHeader(AWS2S3Constants.KEY, simple(UUID.randomUUID().toString()))
                 .log(String.format("Sending message with header :: ${header.%s}", AWS2S3Constants.KEY))
                 .to("aws2-s3:{{aws-s3.bucket-name}}");
-
     }
+
 }
