@@ -1,5 +1,5 @@
 = telegram-kafka project
-A Camel Quarkus example with Telegram / Kafka / AWS DynamoDB
+A Camel Quarkus example with Telegram / Kafka / AWS S3
 
 An example that shows how to create a Telegram bot using camel-quarkus, and how to produce and consume messages in a Kafka topic, and in postgesql database. It also shows how to set quickly a REST endpoint using platform-http. It also shows some implementations of Content Based Router EIP and Message Translator EIP.
 
