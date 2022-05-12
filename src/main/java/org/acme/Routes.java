@@ -16,15 +16,12 @@ public class Routes extends RouteBuilder {
                     .when(isStart)
                         .transform(simple("{{msg.bot.start}}"))
                     .otherwise()
-                        .to("direct:process-message")
+                        .bean(TelegramService.class)
+                        .marshal().json()
+                        .to("kafka:telegram-message")
+                        .transform(simple("{{msg.bot.msg}}"))
                 .end()
                 .to("telegram:bots");
-
-        from("direct:process-message")
-                .bean(TelegramService.class)
-                .marshal().json()
-                .to("kafka:telegram-message")
-                .transform(simple("{{msg.bot.msg}}"));
 
         from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body}")
