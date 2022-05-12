@@ -65,10 +65,6 @@
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-jsonpath</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel.quarkus</groupId>
-      <artifactId>camel-quarkus-direct</artifactId>
-    </dependency>
 
     <!-- cloud / kubernetes -->
     <dependency>
