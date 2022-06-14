@@ -9,7 +9,7 @@
 === For OpenShift
 
 * `oc new-project camel-k-demo`
-* Install RH Serverless (a.k.a. Knative) Operator
+* Install RH Serverless (a.k.a. Knative) Operator & add instance for knative serving in knative-serving namespace
 * Install Camel K Operator
 
 === For Minikube
