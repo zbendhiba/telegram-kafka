@@ -106,12 +106,12 @@ oc new-project camel-k-demo
 
 # Make sure the secrets do not exist yet
 oc delete secret s3-secret
-oc delete secret google-secret
+oc delete secret telegram-secret
 mkdir -p target
 cat s3.properties | envsubst > target/application.properties
 oc create secret generic s3-secret --from-file=target/application.properties
-cat google.properties | envsubst > target/application.properties
-oc create secret generic google-secret --from-file=target/application.properties
+cat telegram.properties | envsubst > target/application.properties
+oc create secret generic telegram-secret --from-file=target/application.properties
 rm target/application.properties
 ----
 

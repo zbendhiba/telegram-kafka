@@ -2,49 +2,43 @@ package org.acme.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class TelegramMessage {
+public class Message {
 
-    Long telegramId;
+    String id = UUID.randomUUID().toString();
     String text;
     String userName;
     String dateTime;
 
-    private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-    public TelegramMessage() {
+    public Message() {
     }
 
-    public TelegramMessage withChatId(Long telegramId) {
-        this.telegramId = telegramId;
-        return this;
-    }
-
-    public TelegramMessage withText(String text) {
+    public Message withText(String text) {
         this.text = text;
         return this;
     }
 
-    public TelegramMessage withDate(Date date) {
-        this.dateTime = DATE_FORMAT.format(date);
+    public Message withDate(String date) {
+        this.dateTime = date;
         return this;
     }
 
 
-    public TelegramMessage withUsername(String name) {
+    public Message withUsername(String name) {
         this.userName = name;
         return this;
     }
 
-    public Long getTelegramId() {
-        return telegramId;
+    public String getId() {
+        return id;
     }
 
-    public void setTelegramId(Long telegramId) {
-        this.telegramId = telegramId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getText() {
