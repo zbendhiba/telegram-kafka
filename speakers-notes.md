@@ -1,6 +1,6 @@
 
 Check memory :
-
+-Xmx20M
 -- Native mode :
 ``` 
 ps -o pid,rss,command -p $(pgrep quarkus)
