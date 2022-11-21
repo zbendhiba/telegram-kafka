@@ -142,7 +142,7 @@ EOF
 == Create the Knative channel
 
 ----
-$ oc apply -f feedback-channel.yaml
+$ oc apply -f talk-channel.yaml
 ----
 
 == Deploy the routes

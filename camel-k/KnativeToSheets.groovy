@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-from('knative:channel/feedback')
+from('knative:channel/talk')
         .log('${body}')
         .unmarshal().json(JsonLibrary.Jackson, java.util.Map.class)
         .log('unmarshalled: ${body}')
@@ -38,8 +38,8 @@ from('knative:channel/feedback')
                             Arrays.asList(
                                     Arrays.asList(
                                             body.get('dateTime'),
-                                            body.get('userName'),
-                                            body.get('text')
+                                            body.get('title'),
+                                            body.get('track')
                                             ))));
 
         })
