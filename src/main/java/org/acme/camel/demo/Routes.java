@@ -38,10 +38,9 @@ public class Routes extends RouteBuilder {
                 .to("aws2-s3:{{aws-s3.bucket-name}}");
 
 
-        from("aws2-s3:{{aws-s3.bucket-name}}")
+        from("aws2-s3:{{aws-s3.bucket-name}}?delay=1500")
                 .log("${body}")
                 .unmarshal().json(TelegramMessage.class)
-                .log("unmarshalled: ${body}")
                 .process(exchange -> {
                     final Message m = exchange.getMessage();
                     TelegramMessage body = m.getBody(TelegramMessage.class);

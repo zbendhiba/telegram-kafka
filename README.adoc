@@ -1,5 +1,5 @@
 = telegram-kafka project
-A Camel Quarkus example with Telegram / Kafka / AWS S3
+A Camel Quarkus example with Telegram / Kafka / AWS S3 / Google Sheets
 
 An example that shows how to create a Telegram bot using camel-quarkus, and how to produce and consume messages in a Kafka topic, and in postgesql database. It also shows how to set quickly a REST endpoint using platform-http. It also shows some implementations of Content Based Router EIP and Message Translator EIP.
 
@@ -150,6 +150,60 @@ At the end of tests, stop instances
 $ docker stop redpanda-1
 ----
 
-== Camel K demo
+=== Google OAuth2
 
-See its separate link:camel-k/README.adoc[README].
+* Create a new OAuth app on https://developers.google.com/identity/protocols/oauth2
+* Allow access to https://www.googleapis.com/auth/spreadsheets
+* You should get `credentials.json` similar to the following:
++
+[source,json]
+----
+{
+"web":{
+  "client_id":"1234abcd.apps.googleusercontent.com",
+  "project_id":"my-app-name",
+  "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+  "token_uri":"https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+  "client_secret":"ABCDE-ABCD1234",
+  "redirect_uris":["http://localhost:8080"]}
+}
+----
++
+* Based on the above values construct an URL and visit it in the browser:
++
+[source,shell]
+----
+https://accounts.google.com/o/oauth2/v2/auth?client_id=1234abcd.apps.googleusercontent.com&redirect_uri=http://localhost:8080&scope=https://www.googleapis.com/auth/spreadsheets&response_type=code&prompt=consent&access_type=offline
+----
++
+* It should return a redirect like `http://localhost:8080?code=4/ABCD1234-abcd1234_abcd`
+* Take that `code` URL parameter and send the following POST request using curl:
++
+[source,shell]
+----
+curl -s \
+ --request POST \
+ --data "code=4/ABCD1234-abcd1234_abcd&client_id=1234abcd.apps.googleusercontent.com&client_secret=ABCDE-ABCD1234&redirect_uri=http://localhost:8080&grant_type=authorization_code" \
+ https://accounts.google.com/o/oauth2/token
+{
+  "access_token": "abcdEFGH",
+  "expires_in": 3599,
+  "refresh_token": "1//abcdEFGH",
+  "scope": "https://www.googleapis.com/auth/spreadsheets",
+  "token_type": "Bearer"
+}
+----
+* Have the Google credentials in your environment:
++
+[source,shell]
+----
+export GOOGLE_API_APPLICATION_NAME=...
+export GOOGLE_API_CLIENT_ID=...
+export GOOGLE_API_CLIENT_SECRET=...
+export GOOGLE_API_REFRESH_TOKEN=...
+# Take the spreadsheetId from the given spredsheet's URL
+# https://docs.google.com/spreadsheets/d/{spreadsheetId}/edit#gid=0
+export GOOGLE_API_SPREADSHEET_ID=...
+----
+
