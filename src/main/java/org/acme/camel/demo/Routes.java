@@ -10,7 +10,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class Routes extends RouteBuilder {
 
@@ -28,7 +27,7 @@ public class Routes extends RouteBuilder {
                         .marshal().json()
                         .to("kafka:telegram-message")
                         .transform(constant("{{msg.bot.msg}}"))
-                    .end()
+                .end()
                 .to("telegram:bots");
 
         from("kafka:telegram-message")
