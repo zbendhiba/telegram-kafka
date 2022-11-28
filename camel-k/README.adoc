@@ -115,30 +115,6 @@ oc create secret generic google-secret --from-file=target/application.properties
 rm target/application.properties
 ----
 
-=== Make Knative autoscaller to scale to zero more aggressively
-
-[source,shell]
-----
-cat <<EOF | oc apply -f -
-apiVersion: v1
-data:
-  container-concurrency-target-default: "2"
-  container-concurrency-target-percentage: "0.7"
-  enable-scale-to-zero: "true"
-  requests-per-second-target-default: "2"
-  scale-to-zero-grace-period: 5s
-  scale-to-zero-pod-retention-period: 0s
-  stable-window: 5s
-kind: ConfigMap
-metadata:
-  annotations:
-  labels:
-    serving.knative.dev/release: v0.21.0
-  name: config-autoscaler
-  namespace: knative-serving
-EOF
-----
-
 == Create the Knative channel
 
 ----

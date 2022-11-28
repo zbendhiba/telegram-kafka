@@ -13,8 +13,13 @@ public class Routes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("aws2-s3:{{aws-s3.bucket-name}}?delay=1500")
-              //  .log("${body}")
+               .log("Incoming from S3: ${body}")
                 .to("kafka:talk");
+
+
+
+
+
 
         from("kafka:talk")
                 .log("${body}")
