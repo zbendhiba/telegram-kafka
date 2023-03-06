@@ -1,6 +1,7 @@
 {
-  "id": "dev2",
-  "dateTime": "2023-02-01 02:45:00",
-  "title": "Serverless Integration with Camel & Quarkus",
-  "track": "developer"
+  "id": "talk-2",
+  "dateTime": "2023-06-07 13:30:00",
+  "title": "Amélioration de vos ressources informatiques avec le service Serverless d'Openshift",
+  "speaker": "David Martini",
+  "room": "Stand F1"
 }

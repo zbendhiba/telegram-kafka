@@ -1,6 +1,7 @@
 {
-  "id": "dev4",
-  "dateTime": "2023-02-02 02:00:00",
-  "title": "Camel enablement + Runtimes, Workshop",
-  "track": "developer"
+  "id": "talk-3",
+  "dateTime": "2023-06-07 13:55:00",
+  "title": "Concept et démonstration de déploiement Openshift avec IBM Cloud Satellite",
+  "speaker": "Lionel Macé",
+  "room": "Stand F1"
 }

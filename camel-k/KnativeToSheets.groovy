@@ -37,9 +37,10 @@ from('knative:channel/talk')
                     new ValueRange().setValues(
                             Arrays.asList(
                                     Arrays.asList(
-                                            body.get('dateTime'),
-                                            body.get('title'),
-                                            body.get('track')
+                                            body.get("dateTime"),
+                                            body.get("title"),
+                                            body.get("speaker"),
+                                            body.get("room")
                                             ))));
 
         })

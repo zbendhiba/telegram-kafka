@@ -1,6 +1,7 @@
 {
-  "id": "dev3",
-  "dateTime": "2023-02-01 03:45:00",
-  "title": "Event-driven autoscaling for Serverless Java",
-  "track": "developer"
+  "id": "talk-3",
+  "dateTime": "2023-06-07 13:55:00",
+  "title": "Construire une resource Kubernetes, du système aux opérateurs, avec des pilpelines Tekton",
+  "speaker": "Sherine Khoury & Timothée Ravier",
+  "room": "Stand F1"
 }
