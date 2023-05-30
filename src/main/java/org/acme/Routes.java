@@ -25,7 +25,7 @@ public class Routes extends RouteBuilder {
 
         from("kafka:telegram-message")
                 .log("Incoming message from Kafka topic telegram-message ${body}")
-                .setHeader(AWS2S3Constants.KEY, simple(UUID.randomUUID().toString()))
+                .setHeader(AWS2S3Constants.KEY, () -> UUID.randomUUID())
                 .log(String.format("Sending message with header :: ${header.%s}", AWS2S3Constants.KEY))
                 .to("aws2-s3:{{aws-s3.bucket-name}}");
     }
