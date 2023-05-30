@@ -1,4 +1,4 @@
-// camel-k: config=secret:google-secret trait=knative-service.min-scale=0
+// camel-k: config=secret:google-secret trait=knative-service.min-scale=0 trait=knative-service.enabled=true
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
