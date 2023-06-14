@@ -2,7 +2,7 @@ package org.acme;
 
 import java.util.Date;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.acme.model.TelegramMessage;
