@@ -33,63 +33,6 @@ export AWS_REGION=...
 export AWS_S3_BUCKET_NAME=...
 ----
 
-=== Google OAuth2
-
-* Create a new OAuth app on https://developers.google.com/identity/protocols/oauth2
-* Allow access to https://www.googleapis.com/auth/spreadsheets
-* You should get `credentials.json` similar to the following:
-+
-[source,json]
-----
-{
-"web":{
-  "client_id":"1234abcd.apps.googleusercontent.com",
-  "project_id":"my-app-name",
-  "auth_uri":"https://accounts.google.com/o/oauth2/auth",
-  "token_uri":"https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-  "client_secret":"ABCDE-ABCD1234",
-  "redirect_uris":["http://localhost:8080"]}
-}
-----
-+
-* Based on the above values construct an URL and visit it in the browser:
-+
-[source,shell]
-----
-https://accounts.google.com/o/oauth2/v2/auth?client_id=1234abcd.apps.googleusercontent.com&redirect_uri=http://localhost:8080&scope=https://www.googleapis.com/auth/spreadsheets&response_type=code&prompt=consent&access_type=offline
-----
-+
-* It should return a redirect like `http://localhost:8080?code=4/ABCD1234-abcd1234_abcd`
-* Take that `code` URL parameter and send the following POST request using curl:
-+
-[source,shell]
-----
-curl -s \
- --request POST \
- --data "code=4/ABCD1234-abcd1234_abcd&client_id=1234abcd.apps.googleusercontent.com&client_secret=ABCDE-ABCD1234&redirect_uri=http://localhost:8080&grant_type=authorization_code" \
- https://accounts.google.com/o/oauth2/token
-{
-  "access_token": "abcdEFGH",
-  "expires_in": 3599,
-  "refresh_token": "1//abcdEFGH",
-  "scope": "https://www.googleapis.com/auth/spreadsheets",
-  "token_type": "Bearer"
-}
-----
-* Have the Google credentials in your environment:
-+
-[source,shell]
-----
-export GOOGLE_API_APPLICATION_NAME=...
-export GOOGLE_API_CLIENT_ID=...
-export GOOGLE_API_CLIENT_SECRET=...
-export GOOGLE_API_REFRESH_TOKEN=...
-# Take the spreadsheetId from the given spredsheet's URL
-# https://docs.google.com/spreadsheets/d/{spreadsheetId}/edit#gid=0
-export GOOGLE_API_SPREADSHEET_ID=...
-----
-
 === Create the secrets
 
 Now you have all pieces to create the secrets for the two integrations.
@@ -106,38 +49,13 @@ oc new-project camel-k-demo
 
 # Make sure the secrets do not exist yet
 oc delete secret s3-secret
-oc delete secret google-secret
 mkdir -p target
 cat s3.properties | envsubst > target/application.properties
 oc create secret generic s3-secret --from-file=target/application.properties
-cat google.properties | envsubst > target/application.properties
-oc create secret generic google-secret --from-file=target/application.properties
 rm target/application.properties
 ----
 
-=== Make Knative autoscaller to scale to zero more aggressively
 
-[source,shell]
-----
-cat <<EOF | oc apply -f -
-apiVersion: v1
-data:
-  container-concurrency-target-default: "2"
-  container-concurrency-target-percentage: "0.7"
-  enable-scale-to-zero: "true"
-  requests-per-second-target-default: "2"
-  scale-to-zero-grace-period: 5s
-  scale-to-zero-pod-retention-period: 0s
-  stable-window: 5s
-kind: ConfigMap
-metadata:
-  annotations:
-  labels:
-    serving.knative.dev/release: v0.21.0
-  name: config-autoscaler
-  namespace: knative-serving
-EOF
-----
 
 == Create the Knative channel
 
@@ -149,11 +67,7 @@ $ oc apply -f jokes-channel.yaml
 
 [source,shell]
 ----
-$ ls
-google.properties  KnativeToSheets.groovy  README.adoc  s3.properties  S3ToKnative.groovy
-$ kamel run KnativeToSheets.groovy
-$ kamel run S3ToKnative.groovy
-# Watch the output of the operator as the containers are being built
-# When both integrations are ready, send some messages via Telegram
-# and see them appearing in your Google Sheet
+$ kubectl label secret s3-secret camel.apache.org/kamelet=aws-s3-sink
+$ kubectl apply -f chuck-norris.yaml
+$ kubectl apply -f S3ToKnative.groovy
 ----
