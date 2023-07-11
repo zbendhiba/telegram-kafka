@@ -1,0 +1,15 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: KameletBinding
+metadata:
+  name: aws-s3-sink-binding
+spec:
+  source:
+    ref:
+      kind: Channel
+      apiVersion: messaging.knative.dev/v1
+      name: jokes
+  sink:
+    ref:
+      kind: Kamelet
+      apiVersion: camel.apache.org/v1alpha1
+      name: aws-s3-sink
