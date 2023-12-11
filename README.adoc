@@ -1,155 +1,74 @@
-= telegram-kafka project
-A Camel Quarkus example with Telegram / Kafka / AWS S3
+= Camel K demo
 
-An example that shows how to create a Telegram bot using camel-quarkus, and how to produce and consume messages in a Kafka topic, and in postgesql database. It also shows how to set quickly a REST endpoint using platform-http. It also shows some implementations of Content Based Router EIP and Message Translator EIP.
+== Prerequisites & preparations
 
-==== Prerequisites
+* A Kubernetes or OpenShift cluster with permissions to install operators.
 
-The example application requires an existing Telegram bot, a running Kafka instance, and a S3 bucket instance.
-For simplicity, on dev mode : this example uses quarkus DevServices to launch a kafka instance, and localstack to emulate S3.
+=== Preparations in the cluster
 
-==== Start S3 locally
+=== For OpenShift
 
-Start an  instance of localstack
+* `oc new-project camel-k-demo`
+* Install RH Serverless (a.k.a. Knative) Operator
+* Install Camel K Operator
+
+=== For Minikube
+
+* https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/setup/minikube.html[Install Knative]
+* https://camel.apache.org/camel-k/latest/installation/installation.html[Install Camel K] via `kamel install`
+
+=== S3
+
+* Have S3 credentials ready in the shell
+* These are the same as you have used for the Camel Quarkus demo in the parent directory
+* Note that the bucket must exist before running this demo, and it should contain some messages delivered by
+  the Camel Quarkus demo.
+* You even may keep the Quarkus app running in dev mode and see the messages arriving in the spreadsheet
++
+[source,shell]
 ----
-$ cd setup
-$ docker-compose up
-----
-
-Then open another terminal to create a bucket
-IMPORTANT: you will need the AWS cli installed, to execute this command
-----
-$ aws --endpoint-url=http://localhost:4566 s3 mb s3://test1
-----
-
-==== Start in Development mode
-
-Set your telegram Token:
-----
-$ export TELEGRAM_AUTHORIZATION_TOKEN=INSERT_YOUR_TELEGRAM_AUTHORIZATION_TOKEN
-----
-
-Run the application in development mode.
-
-----
-$ mvn clean compile quarkus:dev
+export AWS_ACCESS_KEY=...
+export AWS_SECRET_KEY=...
+export AWS_REGION=...
+export AWS_S3_BUCKET_NAME=...
 ----
 
-=== Package and run the application locally
+=== Create the secrets
 
-Once you are done with developing you may want to package and run the application. You need to export KAFKA and AWS S3 credentials:
+Now you have all pieces to create the secrets for the two integrations.
+These steps are for OpenShift.
+For Kubernetes, just replace `oc` with `kubectl`
 
+[source,shell]
 ----
-$ export KAFKA_BOOSTRAP_URL=INSERT_HERE_YOUR_BOOSTRAP_URL
-$ export AWS_S3_BUCKET_NAME=INSERT_HERE_YOUR_AWS_S3_BUCKET_NAME
-$ export AWS_ACCESS_KEY=INSERT_HERE_YOUR_AWS_ACCESS_KEY_ID
-$ export AWS_SECRET_KEY=INSERT_HERE_YOUR_AWS_SECRET_KEY
-$ export AWS_REGION=INSERT_HERE_YOUR_AWS_REGION
-----
+oc login ...
+oc new-project camel-k-demo
+# For Kubernetes:
+# kubectl create namespace camel-k-demo
+# kubectl config set-context --current --namespace=camel-k-demo
 
-IMPORTANT: If you don't have any instances of Kafka and S3, go to section Install Kafka and S3 locally
-
-==== JVM mode
-
-----
-$ mvn clean package -DskipTests
-$ java -jar target/quarkus-app/quarkus-run.jar
-----
-
-==== Native mode
-
-IMPORTANT: Native mode requires having GraalVM and other tools installed. Please check the Prerequisites section
-of https://camel.apache.org/camel-quarkus/latest/first-steps.html#_prerequisites[Camel Quarkus User guide].
-
-To prepare a native executable using GraalVM, run the following command:
-
-----
-$ mvn clean package -DskipTests -Pnative
-$ ./target/*-runner
+# Make sure the secrets do not exist yet
+cd camel-k
+oc delete secret s3-secret
+mkdir -p target
+cat s3.properties | envsubst > target/application.properties
+oc create secret generic s3-secret --from-file=target/application.properties
+rm target/application.properties
 ----
 
-==== Deploying to Kubernetes
 
-You can build a container image for the application like this. Refer to the https://quarkus.io/guides/deploying-to-kubernetes[Quarkus Kubernetes guide] for options around customizing image names, registries etc.
 
-Uncomment the container build section. Set the proper image group.
+== Create the Knative channel
 
 ----
-$ mvn clean package -DskipTests
+$ oc apply -f jokes-channel.yaml
 ----
 
-If you are using a local development cluster like Kind or k3s, you can use host the container image on your local host. Or, with minikube, use the Docker daemon from the cluster virtual machine `eval $(minikube docker-env)`. Otherwise, you'll need to push the image to a registry of your choosing.
+== Deploy the routes
 
-TIP: You can build &amp; deploy in one single step by doing `mvn clean package -DskipTests -Dquarkus.kubernetes.deploy=true`
-
-Check pods are running.
-
-Tail the application logs.
+[source,shell]
 ----
-$ kubectl logs -f  telegram-kafka-67ddc468d-z9kzt
+$ kubectl label secret s3-secret camel.apache.org/kamelet=aws-s3-sink
+$ kubectl apply -f chuck-norris.yaml
+$ kubectl apply -f S3ToKnative.groovy
 ----
-To clean up do.
-----
-$ kubectl delete all -l app.kubernetes.io/name=telegram-kafkan
-----
-==== Deploying to OpenShift
-You may need to set the credentials in `src/main/resources/applications.properties` or attach a kubernetes secrect.
-----
-$ mvn clean package -DskipTests -Dquarkus.kubernetes.deploy=true -Dopenshift
-----
-
-==== Install Kafka and S3 locally
-
-Install Kafka using this command line
-----
-$ docker run -d --name=redpanda-1 --rm \
-        -p 9092:9092 \
-        -p 9644:9644 \
-        docker.vectorized.io/vectorized/redpanda:v22.1.2 \
-        redpanda start \
-        --overprovisioned \
-            --smp 1  \
-            --memory 1G \
-            --reserve-memory 0M \
-            --node-id 0 \
-            --check=false
-----
-
-Create a topic
-----
-    docker exec -it redpanda-1 \
-        rpk topic create telegram-message --brokers=localhost:9092
-----
-
-Export Kafka URL broker
-----
-$ export KAFKA_BOOSTRAP_URL=127.0.0.1:9092
-----
-
-Start an  instance of localstack
-----
-$ cd setup
-$ docker-compose up
-----
-
-Then open another terminal to create a bucket
-IMPORTANT: you will need the AWS cli installed, to execute this command
-----
-$ aws --endpoint-url=http://localhost:4566 s3 mb s3://test1
-----
-
-update application.properties with those values
-
-----
-camel.component.aws2-s3.override-endpoint=true
-camel.component.aws2-s3.uri-endpoint-override=http://localhost:4566
-----
-
-At the end of tests, stop instances
-----
-$ docker stop redpanda-1
-----
-
-== Camel K demo
-
-See its separate link:camel-k/README.adoc[README].
